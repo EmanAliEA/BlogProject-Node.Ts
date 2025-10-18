@@ -1,0 +1,46 @@
+{
+  "name": "blogproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "dev": "nodemon --exec npx ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/joi": "^17.2.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.7.0",
+    "@types/supertest": "^6.0.3",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.37.0",
+    "express": "^5.1.0",
+    "install": "^0.13.0",
+    "jest": "^30.2.0",
+    "joi-objectid": "^4.0.2",
+    "nodemon": "^3.1.10",
+    "npm": "^11.6.1",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/mongodb": "^4.0.6",
+    "@types/mongoose": "^5.11.96",
+    "bcrypt": "^6.0.0",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongodb": "^6.20.0"
+  }
+}
