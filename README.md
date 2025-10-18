@@ -1,86 +1,27 @@
-# Getting Started: How to Run This Project
+# BlogProject
 
-1. **Clone the repository**
-  ```bash
-  git clone <repo-url>
-  cd BlogProject
-  ```
-2. **Install dependencies**
-  ```bash
-  npm install
-  ```
-3. **Set up environment variables**
-  - Copy the example or create a `.env` file in the project root:
-    ```env
-    MONGODB_URI=mongodb://localhost:27017/BlogProject
-    JWT_PRIVATE_KEY=your_jwt_secret
-    PORT=3000
-    ```
-  - Make sure MongoDB is running locally or update the URI for your setup use this command
-     -brew services start mongodb/brew/mongodb-community 
-4. **Run the project in development mode**
-  ```bash
-  npx nodemon --exec npx ts-node src/index.ts
-  ```
-  Or use the npm script (if available):
-  ```bash
-  npm run dev
-  ```
-5. **Run tests**
-  ```bash
-  npm test -- --config=jest.config.cjs
-  ```
-6. **Access the API**
-  - The server will start on the port you set (default: 3000).
-  - Use tools like Postman or curl to interact with the API endpoints.
-## Advanced Usage
+A Node.js, TypeScript, and Express-powered blog API with JWT authentication, MongoDB storage, robust validation, and comprehensive testing.
 
-- **Authentication:** All blog and user routes require a valid JWT token in the `x-auth-token` header.
-- **Error Handling:** API returns clear error messages for validation, authentication, and database errors.
-- **Environment Variables:**
-  - `MONGODB_URI`: MongoDB connection string
-  - `JWT_PRIVATE_KEY`: Secret for JWT signing
-  - `PORT`: Server port (default 3000)
+---
 
-## Common Errors & Solutions
+## 🚀 Getting Started
 
-- **401 Unauthorized:**
-  - Make sure to send a valid JWT token in the `x-auth-token` header.
-  - Check that your token is not expired and matches the user.
-- **Validation Errors:**
-  - API will return messages like `"title" is required` or `"email" must be a valid email`.
-  - Ensure your request body matches the expected schema.
-- **Database Errors:**
-  - If MongoDB is not running or the URI is wrong, you will get a connection error.
-  - Check your `.env` file and MongoDB status.
+### 1. Clone the Repository
 
-## API Reference
-
-- **POST /register** — Register a new user
-- **POST /login** — Login and get JWT token
-- **POST /blogs** — Create a blog (auth required)
-- **GET /blogs** — Get all blogs for the authenticated user
-- **GET /blogs?category=Technology** — Get blogs for the authenticated user filtered by category
-
-## Filtering Blogs by Category
-
-To filter blogs by category, use the `category` query parameter:
-
-```http
-GET /blogs?category=Technology
-Headers: x-auth-token: <JWT>
+```bash
+git clone <repo-url>
+cd BlogProject-Node.Ts
 ```
 
-This will return only blogs in the specified category for the authenticated user.
+### 2. Install Dependencies
 
-- **PUT /blogs/:id** — Update a blog (auth required)
-- **DELETE /blogs/:id** — Delete a blog (auth required)
+```bash
+npm install
+```
 
-## Important: JWT_PRIVATE_KEY Setup
+### 3. Configure Environment Variables
 
-For security, you should set your own value for `JWT_PRIVATE_KEY` in your `.env` file before running the project for the first time. If not set, the default is `valid_PrivateKey` (see `src/config/config.ts`).
-
-## Example .env file
+Create a `.env` file in the root directory. Use the following template:
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/BlogProject
@@ -88,11 +29,104 @@ JWT_PRIVATE_KEY=your_jwt_secret
 PORT=3000
 ```
 
-The coverage report will be available in the `coverage/` directory.
+> **Note:**  
+> - Ensure MongoDB is running locally, or update `MONGODB_URI` for your setup.  
+> - To start MongoDB (Homebrew):  
+>   ```bash
+>   brew services start mongodb/brew/mongodb-community
+>   ```
 
-## Sample API Responses
+### 4. Start the Development Server
 
-### Register User (Success)
+You can use either:
+
+```bash
+npx nodemon --exec npx ts-node src/index.ts
+```
+
+or (if available):
+
+```bash
+npm run dev
+```
+
+### 5. Run Tests
+
+```bash
+npm test -- --config=jest.config.cjs
+```
+
+Test coverage will be available in the `coverage/` directory.
+
+---
+
+## 📚 API Reference
+
+### Authentication
+
+- All blog and user routes require a valid JWT in the `x-auth-token` header.
+
+### Endpoints
+
+| Method | Endpoint                      | Description                              | Auth Required |
+|--------|-------------------------------|------------------------------------------|--------------|
+| POST   | `/register`                   | Register a new user                      | No           |
+| POST   | `/login`                      | Login and receive JWT token              | No           |
+| POST   | `/blogs`                      | Create a blog                            | Yes          |
+| GET    | `/blogs`                      | Get all blogs for authenticated user     | Yes          |
+| GET    | `/blogs?category=Technology`  | Get blogs by category                    | Yes          |
+| PUT    | `/blogs/:id`                  | Update a blog                            | Yes          |
+| DELETE | `/blogs/:id`                  | Delete a blog                            | Yes          |
+
+### Example: Filter Blogs by Category
+
+```http
+GET /blogs?category=Technology
+Headers: x-auth-token: <JWT>
+```
+Returns blogs in the specified category for the authenticated user.
+
+---
+
+## 🛠️ Project Structure
+
+- `src/` — Source code
+- `models/` — Mongoose models (MongoDB)
+- `routes/` — Express route handlers
+- `middleware/` — Express middleware
+- `tests/` — Unit and integration tests
+
+---
+
+## 🧩 Environment & Configuration
+
+- Ensure `.env` is present in the root.
+- Variables:
+  - `MONGODB_URI`: MongoDB connection string
+  - `JWT_PRIVATE_KEY`: JWT signing secret (recommended: set your own value)
+  - `PORT`: Server port (default: 3000)
+
+> For security, always set a strong `JWT_PRIVATE_KEY`.  
+> Default is `valid_PrivateKey` if not set (see `src/config/conf...`).
+
+---
+
+## 📝 Sample API Usage
+
+### Register User
+
+```http
+POST /register
+Content-Type: application/json
+
+{
+  "name": "ahmed",
+  "email": "ahmed@gmail.com",
+  "password": "ahmed12"
+}
+```
+
+#### Success Response
 
 ```json
 {
@@ -102,103 +136,23 @@ The coverage report will be available in the `coverage/` directory.
 }
 ```
 
-### Login (Success)
-
-```json
-{
-  "token": "<JWT_TOKEN>"
-}
-```
-
-### Create Blog (Validation Error)
-
-```json
-{
-  "error": "\"title\" is required"
-}
-```
-
-## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Open a Pull Request
-
-## Contact
-
-For questions or support, please contact:
-
-- Project owner: [Your Name](mailto:your.email@example.com)
-- Or open an issue on GitHub
-
-# BlogProject
-
-A Node.js + TypeScript + Express blog API with testing and validation.
-
-## Prerequisites
-
-- Node.js (v18+ recommended)
-- npm
-- MongoDB (local or cloud instance)
-
-## Install dependencies
-
-```bash
-npm install
-```
-
-## Run the project (development)
-
-```bash
-npx nodemon --exec npx ts-node src/index.ts
-```
-
-## Run tests with config (if needed)
-
-```bash
-npm test -- --config=jest.config.cjs
-```
-
-## Project structure
-
-- `src/` — Source code
-- `tests/` — Unit and integration tests
-- `models/` — Mongoose models (MongoDB ODM)
-- `routes/` — Express routes
-- `middleware/` — Express middleware
-
-## Environment Setup
-
-- Create a `.env` file in the project root with:
-  ```env
-  MONGODB_URI=mongodb://localhost:27017/blogproject
-  JWT_PRIVATE_KEY=your_jwt_secret
-  ```
-
-## Example API Usage
-
-### Register User
-
-```http
-POST /resgister
-{
-	"name": "ahmed",
-	"email": "ahmed@gmail.com",
-	"password": "ahmed12"
-}
-```
-
 ### Login
 
 ```http
 POST /login
+Content-Type: application/json
+
 {
-	"email": "ahmed@gmail.com",
-	"password": "ahmed12"
+  "email": "ahmed@gmail.com",
+  "password": "ahmed12"
+}
+```
+
+#### Success Response
+
+```json
+{
+  "token": "<JWT_TOKEN>"
 }
 ```
 
@@ -207,19 +161,81 @@ POST /login
 ```http
 POST /blogs
 Headers: x-auth-token: <JWT>
+Content-Type: application/json
+
 {
-	"title": "First Blog",
-	"content": "This is my first blog post.",
-	"category": "Technology"
+  "title": "First Blog",
+  "content": "This is my first blog post.",
+  "category": "Technology"
 }
 ```
 
-## Troubleshooting
+#### Validation Error Example
 
-- If you get a MongoDB connection error, check your `MONGODB_URI` and that MongoDB is running.
-- For JWT errors, ensure `JWT_PRIVATE_KEY` is set in your environment.
-- For TypeScript build errors, check that all source files are under `src/` and your `tsconfig.json` is correct.
+```json
+{
+  "error": "\"title\" is required"
+}
+```
 
 ---
 
-For more details, see the code and comments in each folder.
+## ⚠️ Common Errors & Solutions
+
+| Error                 | Solution                                                                                 |
+|-----------------------|------------------------------------------------------------------------------------------|
+| **401 Unauthorized**  | Ensure a valid JWT token in `x-auth-token` header. Token must not be expired or invalid. |
+| **Validation Errors** | API returns messages like `"title" is required` or `"email" must be a valid email`.      |
+| **Database Errors**   | Check if MongoDB is running and `MONGODB_URI` is correct in your `.env` file.            |
+
+---
+
+## 🔍 Troubleshooting
+
+- **MongoDB Connection Error:**  
+  - Verify `MONGODB_URI` and ensure MongoDB is running.
+- **JWT Errors:**  
+  - Ensure `JWT_PRIVATE_KEY` is set.
+- **TypeScript Build Errors:**  
+  - Confirm all source files are under `src/` and `tsconfig.json` is correct.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, open an issue first to discuss your proposal.
+
+**How to contribute:**
+1. Fork the repository
+2. Create your feature branch  
+   ```bash
+   git checkout -b feature/fooBar
+   ```
+3. Commit your changes  
+   ```bash
+   git commit -am 'Add some fooBar'
+   ```
+4. Push to the branch  
+   ```bash
+   git push origin feature/fooBar
+   ```
+5. Open a Pull Request
+
+---
+
+## 📬 Contact
+
+- Project owner: [Your Name](mailto:your.email@example.com)
+- Or open an issue on GitHub
+
+---
+
+## 🧑‍💻 Prerequisites
+
+- Node.js (v18+ recommended)
+- npm
+- MongoDB (local or cloud)
+
+---
+
+_For more details, see the code and comments in each folder._
