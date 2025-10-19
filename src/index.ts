@@ -1,7 +1,6 @@
 import express from 'express';
 import { connect } from 'mongoose';
 import auth from './routes/auth';
-import usersRouter from './routes/users';
 import blogsRouter from './routes/blogs';
 import { jwtPrivateKey } from './config/config';
 
@@ -26,8 +25,7 @@ console.log('---------------------');
     process.exit(1);
   }
   app.use(express.json());
-  app.use('/login', auth);
-  app.use('/register', usersRouter);
+  app.use('/auth', auth);
   app.use('/blogs', blogsRouter);
 
   app.listen(PORT, () => {

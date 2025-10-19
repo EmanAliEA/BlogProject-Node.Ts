@@ -1,4 +1,4 @@
-/// <reference path="../../types/express.d.ts" />
+/// <reference path="../types/express.d.ts" />
 import _ from 'lodash';
 import express from 'express';
 import type { Request, Response } from 'express';
