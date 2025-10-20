@@ -2,34 +2,30 @@
 import _ from 'lodash';
 import express from 'express';
 import type { Request, Response } from 'express';
-import { Blog, blogValidate } from '../models/blog';
+import { Blog } from '../models/blog';
 import { authMiddleware } from '../middleware/auth';
+import { validateBlog } from '../middleware/validation';
 // Ensure custom Express types are loaded
 /// <reference path="../../types/express.d.ts" />
 
 const router = express.Router();
 
 // create blog post
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
-  // check inputs
-  console.log('req.user:', req.body);
-  const { error } = blogValidate({
-    ..._.pick(req.body, ['title', 'content', 'category']),
-    user_id: (req as any).user,
-  });
-  if (error) return res.status(400).send(error.details[0]?.message);
+router.post(
+  '/',
+  [authMiddleware, validateBlog],
+  async (req: Request, res: Response) => {
+    // create new blog
+    const newBlog = new Blog({ ...req.body, user_id: (req as any).user });
+    // save it in DB
+    await newBlog.save();
 
-  // create new blog
-  const newBlog = new Blog({ ...req.body, user_id: (req as any).user });
-
-  // save it in DB
-  await newBlog.save();
-
-  // return 200
-  return res
-    .status(200)
-    .send({ message: 'Blog successfully created', blog: newBlog });
-});
+    // return 200
+    return res
+      .status(200)
+      .send({ message: 'Blog successfully created', blog: newBlog });
+  }
+);
 // get all blog posts
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   console.log('req.user: GET Blogs', (req as any).user);
