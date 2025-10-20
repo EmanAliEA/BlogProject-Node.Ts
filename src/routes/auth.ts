@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import express from 'express';
 import type { Request, Response } from 'express';
 import { validateUser } from '../middleware/validation';
-import { createUser, getUser, isValidPassword } from '../controllers/UserController';
+import { checkPassword, createUser, getUser } from '../controllers/UserController';
 
 const router = express.Router();
 
@@ -12,7 +11,7 @@ router.post('/login', validateUser,async (req: Request, res: Response) => {
   // check if user is already logged in
   const user = await getUser(req , res , "Invalid email or password");
   // check password
-  isValidPassword(req , res , (user as any).password);
+  checkPassword(req , res , (user as any).password);
   // generate token
   const token = (user as any).generateAuthToken();
   res.header('x-auth-token', token).send(token);

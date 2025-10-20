@@ -1,10 +1,8 @@
-/// <reference path="../types/express.d.ts" />
-import _ from 'lodash';
 import express from 'express';
 import type { Request, Response } from 'express';
-import { Blog } from '../models/blog';
 import { authMiddleware } from '../middleware/auth';
 import { validateBlog } from '../middleware/validation';
+import { createBlog, deleteBlog, getBlogs, updateBlog } from '../controllers/blogController';
 // Ensure custom Express types are loaded
 /// <reference path="../../types/express.d.ts" />
 
@@ -15,53 +13,28 @@ router.post(
   '/',
   [authMiddleware, validateBlog],
   async (req: Request, res: Response) => {
+    console.log('req.user: CREATE Blog', (req as any).user);
     // create new blog
-    const newBlog = new Blog({ ...req.body, user_id: (req as any).user });
-    // save it in DB
-    await newBlog.save();
-
-    // return 200
-    return res
-      .status(200)
-      .send({ message: 'Blog successfully created', blog: newBlog });
+    createBlog(req, res);
+    return ;
   }
 );
 // get all blog posts
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
-  console.log('req.user: GET Blogs', (req as any).user);
-  const filterBy = req.query['category'] ? req.query['category'] : null;
-  const blogs = await Blog.find({
-    user_id: (req as any).user,
-    ...(filterBy && { category: filterBy }),
-  }).select('-user_id');
-  if (!blogs.length) return res.status(400).send('no blogs found');
-  return res.status(200).send({ blogs: blogs });
+router.get('/', [authMiddleware ], async (req: Request, res: Response) => {
+ getBlogs(req, res);
 });
 // update blog post by id
-router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
-  // find blog by id
-  let blog = await Blog.findById(req.params['id']);
-  if (blog?.user_id?.toString() !== (req as any).user) {
-    return res.status(400).send('you are not allowed to update this blog');
-  }
-  blog?.updateOne(req.body);
-
-  if (!blog) return res.status(400).send('this blog not found');
-  return res
-    .status(200)
-    .send({ message: 'Blog successfully updated', blog: blog });
+router.put('/:id', [authMiddleware , validateBlog], async (req: Request, res: Response) => {
+  // update blog 
+  updateBlog(req, res);
+  return ;
 });
 
 // delete blog post by id
-router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
-  // get blog and delete it
-  const blog = await Blog.findById(req.params['id']);
-  if (blog?.user_id?.toString() !== (req as any).user) {
-    return res.status(400).send('you are not allowed to delete this blog');
-  }
-  if (!blog) return res.status(400).send('error: this blog is not found');
-  await blog.deleteOne();
-  return res.status(200).send('Blog successfully Deleted');
+router.delete('/:id', [authMiddleware], async (req: Request, res: Response) => {
+  // delete blog
+  deleteBlog(req, res);
+  return ;
 });
 
 export default router;

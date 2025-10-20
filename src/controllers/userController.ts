@@ -6,6 +6,7 @@ import type { Request, Response } from 'express';
 // get user 
 const getUser = async(req:Request , res :Response , message?:string)=>{
     const user = User.findOne({ email: req.body.email });
+    console.log('user found:', user);
     if (!user) return res.status(400).send(message || 'User already registered');
     return user;
 }
@@ -27,11 +28,11 @@ const createUser  =  async(req:Request , res :Response)=>{
 
 
 // check if password is valid
-const isValidPassword = async (req: Request, res: Response , password:string) => {
+const checkPassword = async (req: Request, res: Response , password:string) => {
     const isValidUser = await bcrypt.compare(req.body.password, password);
     if (!isValidUser) return res.status(400).send('Invalid email or password');
-    return;
+    return isValidUser
 }
 
 
-export {getUser , createUser , isValidPassword};
+export {getUser , createUser , checkPassword};
