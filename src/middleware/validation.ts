@@ -5,6 +5,8 @@ import type { Request, Response, NextFunction } from 'express';
 import { UserInt } from '../models/user';
 
 function validateBlog(req: Request, res: Response, next: NextFunction) {
+  if (Object.keys(req.body).length === 0)
+    return res.status(400).send('No data provided to update');
   const { error } = blogValidate({
     ..._.pick(req.body, ['title', 'content', 'category']),
     user_id: (req as any).user,
@@ -13,13 +15,11 @@ function validateBlog(req: Request, res: Response, next: NextFunction) {
   return next();
 }
 function validateUser(req: Request, res: Response, next: NextFunction) {
-    // prefer req.path, fallback to req.originalUrl
-  const path = (req.path || req.originalUrl ).toLowerCase();
+  // prefer req.path, fallback to req.originalUrl
+  const path = (req.path || req.originalUrl).toLowerCase();
   console.log('Request path:', path);
-  // adjust this to match your routes exactly; this matches "/login" at the end of the path
   const isLogin = path.match(/\/login$/) !== null;
-
-  // Debug 
+  // Debug
   // req.user is not set on login, use req.body
   console.log('req.body:', req.body);
   const { error } = userValidate(req.body, isLogin);
@@ -37,7 +37,6 @@ const blogValidate = function (blog: BlogInt) {
   return schema.validate(blog);
 };
 
-
 const userValidate = function (user: UserInt, login: boolean) {
   const schema = Joi.object({
     ...(!login ? { name: Joi.string().min(4).max(12).required() } : {}),
@@ -53,5 +52,4 @@ const userValidate = function (user: UserInt, login: boolean) {
   return schema.validate(user);
 };
 
-
-export { validateBlog,validateUser };
+export { validateBlog, validateUser };
