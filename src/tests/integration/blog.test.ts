@@ -30,8 +30,11 @@ describe('/blogs', () => {
   });
 
   describe('GET /', () => {
+    let category: string = '';
     const exec = () => {
-      return request(server).get('/blogs').set('x-auth-token', token);
+      return request(server)
+        .get(`/blogs?category=${category}`)
+        .set('x-auth-token', token);
     };
     it('should return 200 if blogs exist and for correct user', async () => {
       await Blog.collection.insertMany([
@@ -63,6 +66,30 @@ describe('/blogs', () => {
       const res = await exec();
       expect(res.status).toBe(401);
       expect(res.text).toBe('Access denied. No token provided.');
+    });
+    it('should return filtered blogs when add category query', async () => {
+      await Blog.collection.insertMany([
+        {
+          title: 'blog1',
+          content: 'content1',
+          category: 'Technology',
+          user_id: user._id,
+        },
+        {
+          title: 'blog2',
+          content: 'content2',
+          category: 'sport',
+          user_id: user._id,
+        },
+      ]);
+      category = 'Technology';
+      const res = await exec();
+      // console.log(res.body);
+      expect(res.status).toBe(200);
+      expect(res.body.blogs.length).toBe(1);
+      expect(
+        res.body.blogs.some((b: any) => b.category === category)
+      ).toBeTruthy();
     });
   });
 
