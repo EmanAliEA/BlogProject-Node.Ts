@@ -57,7 +57,11 @@ const getBlogs = async (req: Request, res: Response) => {
       Number(req.query?.['limit']) || 3
     );
     const param = Object.keys(req.query).length && getQueryParam(req);
-    if (param === null && Object.keys(req.query).length === 0) {
+    if (
+      param === null &&
+      req.query['page'] === undefined &&
+      req.query['limit'] === undefined
+    ) {
       return res.status(400).send('this query is not supported');
     }
     const blogs = await Blog.find({

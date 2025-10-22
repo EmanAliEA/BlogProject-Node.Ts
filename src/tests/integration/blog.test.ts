@@ -101,6 +101,12 @@ describe('/blogs', () => {
       expect(res.status).toBe(400);
       expect(res.text).toBe('this query is not supported');
     });
+    it('should return paginated results', async () => {
+      query = '?page=2&limit=1';
+      const res = await exec();
+      expect(res.status).toBe(200);
+      expect(res.body.blogs.length).toBe(1);
+    });
   });
 
   describe('POST /', () => {
