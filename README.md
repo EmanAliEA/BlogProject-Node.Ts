@@ -54,7 +54,7 @@ npm run dev
 ### 5. Run Tests
 
 ```bash
-npm test -- --config=jest.config.cjs
+npm run test:full
 ```
 
 Test coverage will be available in the `coverage/` directory.
