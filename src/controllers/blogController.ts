@@ -1,3 +1,4 @@
+import { paginate } from '../helpers/pagination';
 import { getQueryParam } from '../helpers/queryParamHelper';
 import { Blog } from '../models/blog';
 import { Request, Response } from 'express';
@@ -51,16 +52,23 @@ const updateBlog = async (req: Request, res: Response) => {
 // get Blogs
 const getBlogs = async (req: Request, res: Response) => {
   try {
-    // console.log(Object.keys(req.query).length);
+    const { offset, limit } = paginate(
+      Number(req.query?.['page']) || 1,
+      Number(req.query?.['limit']) || 3
+    );
     const param = Object.keys(req.query).length && getQueryParam(req);
-    if (param === null) {
+    if (param === null && Object.keys(req.query).length === 0) {
       return res.status(400).send('this query is not supported');
     }
-    console.log('param:', param);
     const blogs = await Blog.find({
       user_id: (req as any).user,
       ...(param ?? {}),
-    }).select('-user_id');
+    })
+      .select('-user_id')
+      .skip(offset)
+      .limit(limit)
+      .exec();
+
     if (!blogs.length) return res.status(400).send('no blogs found');
     return res.status(200).send({ blogs: blogs });
   } catch (err) {

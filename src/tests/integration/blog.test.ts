@@ -138,11 +138,6 @@ describe('/blogs', () => {
       expect(res.status).toBe(400);
       expect(res.text).toBe('"title" is required');
     });
-    // it('should return 200 if it is valid', async () => {
-    //   console.log('blog to be sent:', blog);
-    //   const res = await exec();
-    //   expect(res.status).toBe(200);
-    // });
   });
 
   describe('PUT /:id', () => {
