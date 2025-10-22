@@ -4,11 +4,12 @@ import { blogValidate, userValidate } from '../helpers/validationHelpers';
 
 function validateBlog(req: Request, res: Response, next: NextFunction) {
   if (Object.keys(req.body).length === 0)
-    return res.status(400).send('No data provided to update');
+    return res.status(400).send('No data provided');
   const { error } = blogValidate({
     ..._.pick(req.body, ['title', 'content', 'category']),
     user_id: (req as any).user,
   });
+  console.log('Blog Validation Result:', { error });
   if (error) return res.status(400).send(error.details[0]?.message);
   return next();
 }

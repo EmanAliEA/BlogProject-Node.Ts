@@ -6,6 +6,7 @@ const createBlog = async (req: Request, res: Response) => {
   try {
     // create new blog
     const newBlog = new Blog({ ...req.body, user_id: (req as any).user });
+    console.log('Blog created:', newBlog);
     // save it in DB
     await newBlog.save();
     // return 200

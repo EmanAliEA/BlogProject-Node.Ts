@@ -20,8 +20,6 @@ router.post(
   '/',
   [authMiddleware, validateBlog],
   async (req: Request, res: Response) => {
-    console.log('req.user: CREATE Blog', (req as any).user);
-    // create new blog
     createBlog(req, res);
     return;
   }
