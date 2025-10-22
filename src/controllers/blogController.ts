@@ -1,4 +1,4 @@
-import { getFirstQueryParam } from '../helpers/getQuerys';
+import { getQueryParam } from '../helpers/queryParamHelper';
 import { Blog } from '../models/blog';
 import { Request, Response } from 'express';
 
@@ -16,10 +16,6 @@ const createBlog = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(500).send({ message: 'Internal server error' });
   }
-};
-// check ownership
-const checkOwnership = (blog: any, userId: string) => {
-  return blog.user_id?.toString() !== userId;
 };
 
 // get Blog by ID
@@ -55,14 +51,15 @@ const updateBlog = async (req: Request, res: Response) => {
 // get Blogs
 const getBlogs = async (req: Request, res: Response) => {
   try {
-    const param = getFirstQueryParam(req);
-    if (!param) {
+    // console.log(Object.keys(req.query).length);
+    const param = Object.keys(req.query).length && getQueryParam(req);
+    if (param === null) {
       return res.status(400).send('this query is not supported');
     }
-    const { key, value } = param;
+    console.log('param:', param);
     const blogs = await Blog.find({
       user_id: (req as any).user,
-      [key]: new RegExp(String(value), 'i'),
+      ...(param ?? {}),
     }).select('-user_id');
     if (!blogs.length) return res.status(400).send('no blogs found');
     return res.status(200).send({ blogs: blogs });
@@ -81,11 +78,4 @@ const deleteBlog = async (req: Request, res: Response) => {
   }
 };
 
-export {
-  createBlog,
-  getBlogById,
-  updateBlog,
-  deleteBlog,
-  getBlogs,
-  checkOwnership,
-};
+export { createBlog, getBlogById, updateBlog, deleteBlog, getBlogs };

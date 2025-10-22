@@ -3,13 +3,13 @@ import type { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { validateBlog } from '../middleware/validation';
 import {
-  checkOwnership,
   createBlog,
   deleteBlog,
   getBlogById,
   getBlogs,
   updateBlog,
 } from '../controllers/blogController';
+import { checkOwnership } from '../helpers/checkOwnerHelper';
 // Ensure custom Express types are loaded
 /// <reference path="../../types/express.d.ts" />
 
