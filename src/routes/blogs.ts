@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
-import { validateBlog } from '../middleware/validation';
+import { validateRequest } from '../middleware/validation';
 import {
   createBlog,
   deleteBlog,
@@ -18,7 +18,7 @@ const router = express.Router();
 // create blog post
 router.post(
   '/',
-  [authMiddleware, validateBlog],
+  [authMiddleware, validateRequest('blog')],
   async (req: Request, res: Response) => {
     createBlog(req, res);
     return;
