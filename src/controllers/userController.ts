@@ -4,11 +4,9 @@ import { User } from '../models/user';
 import type { Request, Response } from 'express';
 
 // get user
-const getUser = async (req: Request, res: Response, message?: string) => {
+const getUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    if (!user)
-      return res.status(400).send(message || 'User already registered');
     return user;
   } catch (error) {
     return res.status(500).send({ message: error });

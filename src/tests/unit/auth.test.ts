@@ -23,9 +23,10 @@ describe('login', () => {
         status: jest.fn().mockReturnThis(),
         send: jest.fn(),
       };
-      await getUser(req, res, 'Invalid email or password');
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith('Invalid email or password');
+      const foundUser = await getUser(req, res);
+      expect(foundUser).toBeNull();
+      // expect(res.status).toHaveBeenCalledWith(400);
+      // expect(res.send).toHaveBeenCalledWith('Invalid email or password');
     });
     it('should return user if found', async () => {
       // Mock the User.findOne method to return user
@@ -35,7 +36,7 @@ describe('login', () => {
         status: jest.fn().mockReturnThis(),
         send: jest.fn(),
       };
-      const result = await getUser(req, res, 'Invalid email or password');
+      const result = await getUser(req, res);
       expect(result).toBe(user);
     });
   });
@@ -78,9 +79,10 @@ describe('signup', () => {
         status: jest.fn().mockReturnThis(),
         send: jest.fn(),
       };
-      await getUser(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith('User already registered');
+      const foundUser = await getUser(req, res);
+      expect(foundUser).toBeNull();
+      // expect(res.status).toHaveBeenCalledWith(400);
+      // expect(res.send).toHaveBeenCalledWith('User already registered');
     });
     it('should return user if found', async () => {
       // Mock the User.findOne method to return user

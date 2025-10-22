@@ -11,7 +11,8 @@ const router = express.Router();
 
 router.post('/login', validateUser, async (req: Request, res: Response) => {
   // check if user is already logged in
-  const user = await getUser(req, res, 'Invalid email or password');
+  const user = await getUser(req, res);
+  if (!user) return res.status(400).send('Invalid email or password');
   // check password
   const isValid = await checkPassword(req, (user as any).password);
   if (!isValid) return res.status(400).send('Invalid email or password');
@@ -24,7 +25,8 @@ router.post('/login', validateUser, async (req: Request, res: Response) => {
 router.post('/signup', validateUser, async (req: Request, res: Response) => {
   try {
     // check if this user is already new or not
-    getUser(req, res);
+    const user = await getUser(req, res);
+    if (user) return res.status(400).send('User already registered');
     // validated inputs -> create new User
     createUser(req, res);
     return;

@@ -52,7 +52,6 @@ describe('/blogs', () => {
         },
       ]);
       const res = await exec();
-      // console.log(res.body);
       expect(res.status).toBe(200);
       expect(res.body.blogs.length).toBe(2);
     });
@@ -84,7 +83,6 @@ describe('/blogs', () => {
       ]);
       category = 'Technology';
       const res = await exec();
-      // console.log(res.body);
       expect(res.status).toBe(200);
       expect(res.body.blogs.length).toBe(1);
       expect(

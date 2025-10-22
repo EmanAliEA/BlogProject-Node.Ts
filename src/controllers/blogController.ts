@@ -1,3 +1,4 @@
+import { getFirstQueryParam } from '../helpers/getQuerys';
 import { Blog } from '../models/blog';
 import { Request, Response } from 'express';
 
@@ -6,7 +7,6 @@ const createBlog = async (req: Request, res: Response) => {
   try {
     // create new blog
     const newBlog = new Blog({ ...req.body, user_id: (req as any).user });
-    console.log('Blog created:', newBlog);
     // save it in DB
     await newBlog.save();
     // return 200
@@ -51,13 +51,18 @@ const updateBlog = async (req: Request, res: Response) => {
     return res.status(500).send({ message: 'Internal server error' });
   }
 };
+
 // get Blogs
 const getBlogs = async (req: Request, res: Response) => {
   try {
-    const filterBy = req.query['category'] ? req.query['category'] : null;
+    const param = getFirstQueryParam(req);
+    if (!param) {
+      return res.status(400).send('this query is not supported');
+    }
+    const { key, value } = param;
     const blogs = await Blog.find({
       user_id: (req as any).user,
-      ...(filterBy && { category: filterBy }),
+      [key]: new RegExp(String(value), 'i'),
     }).select('-user_id');
     if (!blogs.length) return res.status(400).send('no blogs found');
     return res.status(200).send({ blogs: blogs });
