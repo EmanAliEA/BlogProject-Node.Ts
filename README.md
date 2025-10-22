@@ -29,9 +29,10 @@ JWT_PRIVATE_KEY=your_jwt_secret
 PORT=3000
 ```
 
-> **Note:**  
-> - Ensure MongoDB is running locally, or update `MONGODB_URI` for your setup.  
-> - To start MongoDB (Homebrew):  
+> **Note:**
+>
+> - Ensure MongoDB is running locally, or update `MONGODB_URI` for your setup.
+> - To start MongoDB (Homebrew):
 >   ```bash
 >   brew services start mongodb/brew/mongodb-community
 >   ```
@@ -68,15 +69,31 @@ Test coverage will be available in the `coverage/` directory.
 
 ### Endpoints
 
-| Method | Endpoint                      | Description                              | Auth Required |
-|--------|-------------------------------|------------------------------------------|--------------|
-| POST   | `/register`                   | Register a new user                      | No           |
-| POST   | `/login`                      | Login and receive JWT token              | No           |
-| POST   | `/blogs`                      | Create a blog                            | Yes          |
-| GET    | `/blogs`                      | Get all blogs for authenticated user     | Yes          |
-| GET    | `/blogs?category=Technology`  | Get blogs by category                    | Yes          |
-| PUT    | `/blogs/:id`                  | Update a blog                            | Yes          |
-| DELETE | `/blogs/:id`                  | Delete a blog                            | Yes          |
+| Method | Endpoint                     | Description                          | Auth Required |
+| ------ | ---------------------------- | ------------------------------------ | ------------- |
+| POST   | `/register`                  | Register a new user                  | No            |
+| POST   | `/login`                     | Login and receive JWT token          | No            |
+| POST   | `/blogs`                     | Create a blog                        | Yes           |
+| GET    | `/blogs`                     | Get all blogs for authenticated user | Yes           |
+| GET    | `/blogs?category=Technology` | Get blogs by category                | Yes           |
+| PUT    | `/blogs/:id`                 | Update a blog                        | Yes           |
+| DELETE | `/blogs/:id`                 | Delete a blog                        | Yes           |
+
+#### Query Parameters for GET /blogs
+
+- `category`: Filter blogs by category (e.g., `/blogs?category=Technology`)
+- `title`: Search blogs by title (case-insensitive, partial match, e.g., `/blogs?title=foo`)
+- `content`: Search blogs by content (case-insensitive, partial match, e.g., `/blogs?content=bar`)
+- `limit`: Limit the number of returned blogs (e.g., `/blogs?limit=5`)
+
+You can combine these parameters, for example:
+
+```http
+GET /blogs?category=Technology&title=ai&limit=2
+Headers: x-auth-token: <JWT>
+```
+
+Returns up to 2 blogs in the Technology category with 'ai' in the title.
 
 ### Example: Filter Blogs by Category
 
@@ -84,17 +101,28 @@ Test coverage will be available in the `coverage/` directory.
 GET /blogs?category=Technology
 Headers: x-auth-token: <JWT>
 ```
+
 Returns blogs in the specified category for the authenticated user.
 
 ---
 
 ## 🛠️ Project Structure
 
-- `src/` — Source code
-- `models/` — Mongoose models (MongoDB)
-- `routes/` — Express route handlers
-- `middleware/` — Express middleware
-- `tests/` — Unit and integration tests
+```
+src/
+  controllers/      # Express route controllers (business logic)
+  models/           # Mongoose models (MongoDB schemas)
+  routes/           # Express route handlers
+  middleware/       # Express middleware (auth, validation, etc.)
+  helpers/          # Reusable helper functions (validation, query, etc.)
+  config/           # Configuration files (JWT, DB, etc.)
+tests/
+  integration/      # Integration tests (API endpoints)
+  unit/             # Unit tests (controllers, helpers)
+package.json        # Project metadata and scripts
+tsconfig.json       # TypeScript configuration
+README.md           # Project documentation
+```
 
 ---
 
@@ -183,7 +211,7 @@ Content-Type: application/json
 ## ⚠️ Common Errors & Solutions
 
 | Error                 | Solution                                                                                 |
-|-----------------------|------------------------------------------------------------------------------------------|
+| --------------------- | ---------------------------------------------------------------------------------------- |
 | **401 Unauthorized**  | Ensure a valid JWT token in `x-auth-token` header. Token must not be expired or invalid. |
 | **Validation Errors** | API returns messages like `"title" is required` or `"email" must be a valid email`.      |
 | **Database Errors**   | Check if MongoDB is running and `MONGODB_URI` is correct in your `.env` file.            |
@@ -192,11 +220,11 @@ Content-Type: application/json
 
 ## 🔍 Troubleshooting
 
-- **MongoDB Connection Error:**  
+- **MongoDB Connection Error:**
   - Verify `MONGODB_URI` and ensure MongoDB is running.
-- **JWT Errors:**  
+- **JWT Errors:**
   - Ensure `JWT_PRIVATE_KEY` is set.
-- **TypeScript Build Errors:**  
+- **TypeScript Build Errors:**
   - Confirm all source files are under `src/` and `tsconfig.json` is correct.
 
 ---
@@ -206,16 +234,17 @@ Content-Type: application/json
 Pull requests are welcome! For major changes, open an issue first to discuss your proposal.
 
 **How to contribute:**
+
 1. Fork the repository
-2. Create your feature branch  
+2. Create your feature branch
    ```bash
    git checkout -b feature/fooBar
    ```
-3. Commit your changes  
+3. Commit your changes
    ```bash
    git commit -am 'Add some fooBar'
    ```
-4. Push to the branch  
+4. Push to the branch
    ```bash
    git push origin feature/fooBar
    ```

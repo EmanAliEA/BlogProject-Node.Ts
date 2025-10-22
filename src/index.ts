@@ -1,8 +1,7 @@
 import express from 'express';
 import { connect } from 'mongoose';
-import auth from './routes/auth';
-import blogsRouter from './routes/blogs';
 import { jwtPrivateKey } from './config/config';
+import { routes } from './startup/routesFile';
 
 const app = express();
 
@@ -24,10 +23,7 @@ console.log('---------------------');
     console.error('Failed to connect to MongoDB', err);
     process.exit(1);
   }
-  app.use(express.json());
-  app.use('/auth', auth);
-  app.use('/blogs', blogsRouter);
-
+  routes(app);
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
