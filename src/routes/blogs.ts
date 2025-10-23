@@ -1,72 +1,17 @@
 import express from 'express';
-import type { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import {
   createBlog,
   deleteBlog,
-  // getBlogById,
   getBlogs,
-  // updateBlog,
+  updateBlog,
 } from '../controllers/blogController';
 import { checkOwnership } from '../middleware/ownerShip';
-// import { checkOwnership } from '../helpers/checkOwnerHelper';
-// Ensure custom Express types are loaded
-/// <reference path="../../types/express.d.ts" />
 
 const router = express.Router();
+router.post('/', [authMiddleware, validateRequest('blog')], createBlog);
 
-/**
- * @openapi
- * tags:
- *   - name: Blogs
- *     description: Operations related to blog posts
- */
-
-// create blog post
-/**
- * @openapi
- * /blogs:
- *   post:
- *     tags:
- *       - Blogs
- *     summary: Create a new blog post
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: The title of the blog post.
- *                 example: "My First Blog Post"
- *               content:
- *                 type: string
- *                 description: The content of the blog post.
- *                 example: "This is the content of my first blog post."
- *               category:
- *                 type: string
- *                 description: The category of the blog post.
- *                 example: "Technology"
- *     responses:
- *       200:
- *         description: The created blog post.
- *       400:
- *         description: Bad request.
- *       401:
- *         description: Unauthorized access.
- */
-router.post(
-  '/',
-  [authMiddleware, validateRequest('blog')],
-  async (req: Request, res: Response) => {
-    createBlog(req, res);
-    return;
-  }
-);
-// get all blog posts
 /**
  * @openapi
  * /blogs:
@@ -78,10 +23,8 @@ router.post(
  *       200:
  *         description: A list of blogs.
  */
-router.get('/', authMiddleware, async (req: Request, res: Response) => {
-  getBlogs(req, res);
-});
-// update blog post by id
+router.get('/', authMiddleware, getBlogs);
+
 /**
  * @openapi
  * /blogs/{id}:
@@ -126,21 +69,12 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
  *       400:
  *         description: No data provided to update.
  */
-// router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
-//   // check if request body is empty
-//   if (Object.keys(req.body).length === 0)
-//     return res.status(400).send('No data provided to update');
-//   // get blog
-//   const blog = await getBlogById(req, res);
-//   // check ownership
-//   if (checkOwnership(blog, (req as any).user))
-//     return res.status(403).send('you are not allowed to update this blog');
-//   // update blog
-//   updateBlog(req, res);
-//   return;
-// });
+router.put(
+  '/:id',
+  [authMiddleware, validateRequest('blog'), checkOwnership],
+  updateBlog
+);
 
-// delete blog post by id
 /**
  * @openapi
  * /blogs/{id}:

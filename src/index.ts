@@ -1,6 +1,7 @@
 import express from 'express';
 import { routes } from './startup/routesFile';
 import { connectToDatabase } from './startup/db';
+import { setupSwagger } from './startup/swagger';
 
 const app = express();
 const PORT = process.env['PORT'] || 3000;
@@ -8,6 +9,7 @@ const PORT = process.env['PORT'] || 3000;
 (async () => {
   await connectToDatabase();
   routes(app);
+  setupSwagger(app);
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

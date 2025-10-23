@@ -23,8 +23,6 @@ const createBlog = async (req: Request, res: Response) => {
 const getBlogById = async (req: Request, res: Response) => {
   // find blog by id
   try {
-    if (Object.keys(req.body).length === 0)
-      return res.status(400).send('No data provided to update');
     const blog = await Blog.findById(req.params['id']);
     if (!blog) return res.status(400).send('this blog not found');
     return blog;
