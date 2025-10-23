@@ -181,7 +181,7 @@ describe('/blogs', () => {
       expect(res.status).toBe(400);
       expect(res.text).toBe('this blog not found');
     });
-    it('should return 400 if the user is not the owner of the blog', async () => {
+    it('should return 403 if the user is not the owner of the blog', async () => {
       user._id = new mongoose.Types.ObjectId();
       token =
         typeof user.generateAuthToken === 'function'
@@ -190,7 +190,7 @@ describe('/blogs', () => {
 
       const res = await exec();
 
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(403);
       expect(res.text).toBe('you are not allowed to update this blog');
     });
     it('should return 200 if the blog is updated successfully', async () => {
@@ -222,7 +222,7 @@ describe('/blogs', () => {
       expect(res.status).toBe(400);
       expect(res.text).toBe('this blog not found');
     });
-    it('should return 400 if the user is not the owner of the blog', async () => {
+    it('should return 403 if the user is not the owner of the blog', async () => {
       user._id = new mongoose.Types.ObjectId();
       token =
         typeof user.generateAuthToken === 'function'
@@ -231,7 +231,7 @@ describe('/blogs', () => {
 
       const res = await exec();
 
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(403);
       expect(res.text).toBe('you are not allowed to delete this blog');
     });
     it('should return 200 if the blog is deleted successfully', async () => {

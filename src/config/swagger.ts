@@ -4,10 +4,10 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'My API Documentation',
+      title: 'Blog Project API',
       version: '1.0.0',
       description:
-        'API documentation for my Express.js application with MongoDB',
+        'API documentation for Blog Project using Swagger and OpenAPI 3.0',
     },
     servers: [
       {
