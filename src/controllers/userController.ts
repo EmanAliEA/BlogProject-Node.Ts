@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcrypt';
 import hashPassword from '../helpers/hashPassword';
 import { User } from '../models/user';
 import type { Request, Response } from 'express';
@@ -13,9 +12,17 @@ const getUser = async (req: Request, res: Response) => {
   }
 };
 
+const generateToken = (user: any, res: Response) => {
+  const token = (user as any).generateAuthToken();
+  return res.header('x-auth-token', token).send(token);
+};
+
 // create new user
 const createUser = async (req: Request, res: Response) => {
   try {
+    // check if user already exists
+    const user = await getUser(req, res);
+    if (user) return res.status(400).send('User already registered');
     // create new user
     const newUser = new User(req.body);
     // hash password
@@ -29,14 +36,15 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// check if password is valid
-const checkPassword = async (req: Request, password: string) => {
+//
+const loginUser = async (req: Request, res: Response) => {
   try {
-    const isValidUser = await bcrypt.compare(req.body.password, password);
-    return isValidUser;
-  } catch (err) {
-    return err;
+    const user = await getUser(req, res);
+    if (!user) return res.status(400).send('Invalid email or password');
+    return generateToken(user, res);
+  } catch (error) {
+    return res.status(500).send({ message: error });
   }
 };
 
-export { getUser, createUser, checkPassword };
+export { createUser, loginUser, getUser };

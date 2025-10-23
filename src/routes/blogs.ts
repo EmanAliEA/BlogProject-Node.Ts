@@ -5,11 +5,12 @@ import { validateRequest } from '../middleware/validation';
 import {
   createBlog,
   deleteBlog,
-  getBlogById,
+  // getBlogById,
   getBlogs,
-  updateBlog,
+  // updateBlog,
 } from '../controllers/blogController';
-import { checkOwnership } from '../helpers/checkOwnerHelper';
+import { checkOwnership } from '../middleware/ownerShip';
+// import { checkOwnership } from '../helpers/checkOwnerHelper';
 // Ensure custom Express types are loaded
 /// <reference path="../../types/express.d.ts" />
 
@@ -125,19 +126,19 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
  *       400:
  *         description: No data provided to update.
  */
-router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
-  // check if request body is empty
-  if (Object.keys(req.body).length === 0)
-    return res.status(400).send('No data provided to update');
-  // get blog
-  const blog = await getBlogById(req, res);
-  // check ownership
-  if (checkOwnership(blog, (req as any).user))
-    return res.status(403).send('you are not allowed to update this blog');
-  // update blog
-  updateBlog(req, res);
-  return;
-});
+// router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
+//   // check if request body is empty
+//   if (Object.keys(req.body).length === 0)
+//     return res.status(400).send('No data provided to update');
+//   // get blog
+//   const blog = await getBlogById(req, res);
+//   // check ownership
+//   if (checkOwnership(blog, (req as any).user))
+//     return res.status(403).send('you are not allowed to update this blog');
+//   // update blog
+//   updateBlog(req, res);
+//   return;
+// });
 
 // delete blog post by id
 /**
@@ -165,15 +166,6 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
  *       401:
  *         description: Unauthorized access.
  */
-router.delete('/:id', [authMiddleware], async (req: Request, res: Response) => {
-  // get blog
-  const blog = await getBlogById(req, res);
-  // check ownership
-  if (checkOwnership(blog, (req as any).user))
-    return res.status(403).send('you are not allowed to delete this blog');
-  // delete blog
-  deleteBlog(req, res);
-  return;
-});
+router.delete('/:id', [authMiddleware, checkOwnership], deleteBlog);
 
 export default router;
