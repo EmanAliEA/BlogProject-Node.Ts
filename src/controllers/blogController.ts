@@ -23,6 +23,7 @@ const createBlog = async (req: Request, res: Response) => {
 const getBlogById = async (req: Request, res: Response) => {
   // find blog by id
   try {
+    if (!req.params['id']) return res.status(400).send('Blog ID is required');
     const blog = await Blog.findById(req.params['id']);
     if (!blog) return res.status(400).send('this blog not found');
     return blog;
@@ -33,14 +34,9 @@ const getBlogById = async (req: Request, res: Response) => {
 // update Blog
 const updateBlog = async (req: Request, res: Response) => {
   try {
-    const blog = await Blog.findOneAndUpdate(
-      { _id: req.params['id'] },
-      req.body,
-      { new: true }
-    );
-    if (!blog) {
-      return res.status(400).send('this blog not found');
-    }
+    const blog = await Blog.findByIdAndUpdate(req.params['id'], req.body, {
+      new: true,
+    });
     return res
       .status(200)
       .send({ message: 'Blog successfully updated', blog: blog });
@@ -83,8 +79,9 @@ const getBlogs = async (req: Request, res: Response) => {
 const deleteBlog = async (req: Request, res: Response) => {
   try {
     const blog = await Blog.findByIdAndDelete(req.params['id']);
-    if (!blog) return res.status(400).send('this blog not found');
-    return res.status(200).send('Blog successfully Deleted');
+    return res
+      .status(200)
+      .send({ message: 'Blog successfully Deleted', blog: blog });
   } catch (err) {
     return res.status(500).send({ message: 'Internal server error' });
   }

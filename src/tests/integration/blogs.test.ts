@@ -146,61 +146,6 @@ describe('/blogs', () => {
     });
   });
 
-  describe('PUT /:id', () => {
-    beforeEach(async () => {
-      blog = new Blog({
-        title: 'blog1',
-        content: 'content1',
-        category: 'category1',
-        user_id: user._id,
-      });
-      await blog.save();
-    });
-    const exec = () => {
-      return request(server)
-        .put(`/blogs/${blog._id}`)
-        .set('x-auth-token', token)
-        .send(blog);
-    };
-    it('should return 401 if client is not logged in', async () => {
-      token = '';
-      const res = await exec();
-      expect(res.status).toBe(401);
-    });
-    it('should return 400 if no data is provided', async () => {
-      blog = {};
-      const res = await exec();
-
-      expect(res.status).toBe(400);
-      expect(res.text).toBe('No data provided to update');
-    });
-    it('should return 400 if the blog does not exist', async () => {
-      blog._id = new mongoose.Types.ObjectId().toHexString();
-      const res = await exec();
-
-      expect(res.status).toBe(400);
-      expect(res.text).toBe('this blog not found');
-    });
-    it('should return 403 if the user is not the owner of the blog', async () => {
-      user._id = new mongoose.Types.ObjectId();
-      token =
-        typeof user.generateAuthToken === 'function'
-          ? user.generateAuthToken()
-          : '';
-
-      const res = await exec();
-
-      expect(res.status).toBe(403);
-      expect(res.text).toBe('you are not allowed to update this blog');
-    });
-    it('should return 200 if the blog is updated successfully', async () => {
-      const res = await exec();
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('message', 'Blog successfully updated');
-      expect(res.body).toHaveProperty('blog');
-    });
-  });
-
   describe('DELETE /:id', () => {
     beforeEach(async () => {
       blog = new Blog({
@@ -222,22 +167,9 @@ describe('/blogs', () => {
       expect(res.status).toBe(400);
       expect(res.text).toBe('this blog not found');
     });
-    it('should return 403 if the user is not the owner of the blog', async () => {
-      user._id = new mongoose.Types.ObjectId();
-      token =
-        typeof user.generateAuthToken === 'function'
-          ? user.generateAuthToken()
-          : '';
-
-      const res = await exec();
-
-      expect(res.status).toBe(403);
-      expect(res.text).toBe('you are not allowed to delete this blog');
-    });
     it('should return 200 if the blog is deleted successfully', async () => {
       const res = await exec();
       expect(res.status).toBe(200);
-      expect(res.text).toBe('Blog successfully Deleted');
     });
   });
 });

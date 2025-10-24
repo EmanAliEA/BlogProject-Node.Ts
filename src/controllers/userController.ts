@@ -13,11 +13,6 @@ const getUser = async (req: Request, res: Response) => {
   }
 };
 
-const generateToken = (user: any, res: Response) => {
-  const token = (user as any).generateAuthToken();
-  return res.header('x-auth-token', token).send(token);
-};
-
 const checkPassword = async (password: string, user: any, res: Response) => {
   try {
     const isValidUser = await bcrypt.compare(password, (user as any).password);
@@ -50,13 +45,13 @@ const createUser = async (req: Request, res: Response) => {
 //
 const loginUser = async (req: Request, res: Response) => {
   try {
-    console.log('Login request body:', req.body);
     const user = await getUser(req, res);
     if (user === null || !user)
       return res.status(400).send('Invalid email or password');
     const isValidPassword = await checkPassword(req.body.password, user, res);
     if (isValidPassword !== true) return;
-    return generateToken(user, res);
+    const token = (user as any).generateAuthToken();
+    return res.header('x-auth-token', token).send(token);
   } catch (error) {
     return res.status(500).send({ message: error });
   }

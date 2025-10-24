@@ -6,7 +6,9 @@ const checkOwnership: RequestHandler = (req, res, next) => {
   const blog = getBlogById(req as any, res);
   const isOwner = (blog as any).user_id?.toString() !== userId;
   if (isOwner)
-    return res.status(403).send('you are not allowed to delete this blog');
+    return res
+      .status(403)
+      .send('you are not allowed to delete/update this blog');
   return next();
 };
 

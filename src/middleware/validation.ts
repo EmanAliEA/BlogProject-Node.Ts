@@ -6,9 +6,9 @@ type ValidatorType = 'blog' | 'user';
 
 function validateRequest(type: ValidatorType) {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (Object.keys(req.body).length === 0)
-      return res.status(400).send('No data provided');
     let error;
+    if (!req.body || Object.keys(req.body).length === 0)
+      return res.status(400).send('No data provided');
     if (type === 'blog') {
       ({ error } = blogValidate({
         ..._.pick(req.body, ['title', 'content', 'category']),

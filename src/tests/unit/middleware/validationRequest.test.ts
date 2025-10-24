@@ -1,3 +1,4 @@
+import * as validateHelpers from '../../../helpers/validationHelpers';
 import { validateRequest } from '../../../middleware/validation';
 
 describe('validateRequest', () => {
@@ -6,6 +7,10 @@ describe('validateRequest', () => {
   let next: jest.Mock;
 
   beforeEach(() => {
+    req = {
+      body: {},
+      user: '',
+    };
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
@@ -50,6 +55,36 @@ describe('validateRequest', () => {
       middleware(req, res, next);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send).toHaveBeenCalled();
+    });
+  });
+  describe('blog validation', () => {
+    beforeEach(() => {
+      req.path = '/blogs';
+      req.body = {
+        title: 'Valid Title',
+        content: 'This is valid content for the blog post.',
+        category: 'Technology',
+      };
+    });
+
+    it('should call next() for valid blog data', () => {
+      jest
+        .spyOn(validateHelpers, 'blogValidate')
+        .mockReturnValue({ error: null } as any);
+
+      const middleware = validateRequest('blog');
+      middleware(req, res, next);
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+    it('should return 400 for invalid blog data', () => {
+      jest.spyOn(validateHelpers, 'blogValidate').mockReturnValue({
+        error: { details: [{ message: 'Invalid blog data' }] },
+      } as any);
+
+      const middleware = validateRequest('blog');
+      middleware(req, res, next);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith('Invalid blog data');
     });
   });
 });
