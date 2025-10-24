@@ -12,7 +12,6 @@ export function authMiddleware(
   next: NextFunction
 ) {
   try {
-    console.log('Auth Middleware Invoked');
     const token = req.headers['x-auth-token'];
     if (!token)
       return res.status(401).send('Access denied. No token provided.');
@@ -20,12 +19,11 @@ export function authMiddleware(
       token as string,
       jwtPrivateKey || (process.env['JWT_PRIVATE_KEY'] as string)
     );
-    console.log('decodedData:AuthMiddleware', decodedData);
     if (decodedData) {
       (req as any).user = decodedData.id;
       return next();
     }
   } catch (err) {
-    return res.status(401).send('Invalid token.');
+    return res.status(500).send('server error');
   }
 }

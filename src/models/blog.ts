@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import mongoose from 'mongoose';
 
 interface BlogInt {
@@ -17,14 +16,4 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema);
 
-const blogValidate = function (blog: BlogInt) {
-  const schema = Joi.object({
-    title: Joi.string().required(),
-    content: Joi.string().required(),
-    category: Joi.string().required(),
-    user_id: Joi.string().required().hex().length(24),
-  });
-  return schema.validate(blog);
-};
-
-export { Blog, blogValidate, type BlogInt };
+export { Blog, type BlogInt };
