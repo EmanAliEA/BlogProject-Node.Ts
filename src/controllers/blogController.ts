@@ -34,6 +34,8 @@ const getBlogById = async (req: Request, res: Response) => {
 // update Blog
 const updateBlog = async (req: Request, res: Response) => {
   try {
+    if (Object.keys(req.body).length === 0)
+      return res.status(401).send('Access denied. No token provided.');
     const blog = await Blog.findByIdAndUpdate(req.params['id'], req.body, {
       new: true,
     });
