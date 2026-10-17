@@ -1,4 +1,4 @@
-import Joi from 'joi';
+
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { jwtPrivateKey } from '../config/config';
@@ -37,19 +37,4 @@ userSchema.methods['generateAuthToken'] = function () {
 
 const User = mongoose.model<UserInt>('User', userSchema);
 
-const userValidate = function (user: UserInt, login: boolean) {
-  const schema = Joi.object({
-    ...(!login ? { name: Joi.string().min(4).max(12).required() } : {}),
-    email: Joi.string().min(5).max(100).required().email(),
-    password: Joi.string()
-      .min(8)
-      .required()
-      .pattern(new RegExp('^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$'))
-      .message(
-        'Password must be at least 8 characters long and include at least one letter and one number'
-      ),
-  });
-  return schema.validate(user);
-};
-
-export { User, userValidate, type UserInt };
+export { User, type UserInt };
